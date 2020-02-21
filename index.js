@@ -5,7 +5,8 @@ const bodyparser = require('body-parser')
 const expressjwt = require('express-jwt')
 const basicauth = require('basic-auth')
 const ds = require('./datasets.js')
-const wh = require('./goaswh.js')
+const wh = require('./goaswh.js')(ds);
+
 
 const goasuser = {
     user : 'goas',
@@ -22,7 +23,7 @@ app.use((req,res,next) => {
 })
 app.listen(8080,() => console.log('Listening on 8080'));
 
-app.get('/goas',(req,res) => {
+app.post('/goas',(req,res) => {
     if(!req.auth) 
         return res.status(401).send("Unauthorized-1");
     if(req.auth.name != goasuser.user || req.auth.pass != goasuser.pass) 
@@ -36,7 +37,7 @@ app.get('/goas/currencies',(req,res) => {
 })
 
 app.get('/goas/branches',(req,res)=>{
-    res.status(200).send({branches:Object.keys(ds.branches.poi_list).length})
+    res.status(200).send({branches:ds.branches.length})
 })
 
 
