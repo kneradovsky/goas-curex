@@ -1,10 +1,10 @@
 const https = require('https');
 
-const urlCurrencies = "https://www.open.ru/storage/mobile/currencies.json";
+const urlCurrencies = "https://www.open.ru/currencies.json";
 const urlBranches = "https://www.open.ru/storage/mobile/offices_atms.json";
 
  class Datasets {
-    currencies=[];
+    currencies={};
     branches=[];
     branchesByGeo = {};
     currenciesByCity={}
@@ -13,7 +13,7 @@ const urlBranches = "https://www.open.ru/storage/mobile/offices_atms.json";
 
     constructor() {
         //this.loadBranches();
-        this.loadCurrencies();
+        //this.loadCurrencies();
     }
 
     loadBranches() {
@@ -23,15 +23,18 @@ const urlBranches = "https://www.open.ru/storage/mobile/offices_atms.json";
         setTimeout(() => this.loadBranches,24*3600*1000); //load branches once a day        
     }
 
-    loadCurrencies() {
-        https.get(urlCurrencies, (res) => {
-            this.processJSON(res,(obj) => this.processCurrencies(obj));
-        })
-        setTimeout(() => this.currencies,3600*1000); //load currencies every hour
+    loadCurrencies(city) {
+        if(this.currencies[city]===undefined) 
+            return new Promise((resolve,error) => {
+                https.get(urlCurrencies+"?city="+city, (res) => {
+                    this.processJSON(res,(obj) => resolve(this.processCurrencies(obj)),error);
+            })})
+        else return new Promise((resolve,reject)=>{resolve(this.currencies[city])});
+        //setTimeout(() => this.currencies,3600*1000); //load currencies every hour
     }
 
 
-    processJSON(res,endcb) {
+    processJSON(res,endcb,errcb) {
         const { statusCode } = res;
         const contentType = res.headers['content-type'];
 
@@ -47,6 +50,7 @@ const urlBranches = "https://www.open.ru/storage/mobile/offices_atms.json";
             console.error(error.message);
             // Consume response data to free up memory
             res.resume();
+            errcb(err);
             return;
         }
 

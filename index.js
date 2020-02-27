@@ -19,17 +19,17 @@ app.use(bodyparser.json());
 app.use((req,res,next) => {
     auth = basicauth(req);
     req.auth=auth;
+    if(req.method == 'POST') {
+        if(!req.auth) 
+            return res.status(401).send("Unauthorized-1");
+        if(req.auth.name != goasuser.user || req.auth.pass != goasuser.pass) 
+            return res.status(401).send("Unauthorized-2");
+    } 
     next();
 })
 app.listen(8080,() => console.log('Listening on 8080'));
 
-app.post('/goas',(req,res) => {
-    if(!req.auth) 
-        return res.status(401).send("Unauthorized-1");
-    if(req.auth.name != goasuser.user || req.auth.pass != goasuser.pass) 
-        return res.status(401).send("Unauthorized-2");
-    wh.processRequest(req,res);
-})
+app.post('/goas',wh.app);
 
 
 app.get('/goas/currencies',(req,res) => {
