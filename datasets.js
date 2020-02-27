@@ -27,7 +27,7 @@ const urlBranches = "https://www.open.ru/storage/mobile/offices_atms.json";
         if(this.currencies[city]===undefined) 
             return new Promise((resolve,error) => {
                 https.get(urlCurrencies+"?city="+city, (res) => {
-                    this.processJSON(res,(obj) => resolve(this.processCurrencies(obj)),error);
+                    this.processJSON(res,(obj) => resolve(this.processCurrencies(city,obj)),error);
             })})
         else return new Promise((resolve,reject)=>{resolve(this.currencies[city])});
         //setTimeout(() => this.currencies,3600*1000); //load currencies every hour
@@ -81,13 +81,9 @@ const urlBranches = "https://www.open.ru/storage/mobile/offices_atms.json";
         this.branchesByGeo = brByGeo;
     }
 
-    processCurrencies(obj) {
-        this.currencies = obj.data.currencies;
-        const curByCity = {};
-        this.currencies.forEach((cur)=> {
-            curByCity[cur.city]=cur;
-        });
-        this.currenciesByCity=curByCity;
+    processCurrencies(city,obj) {
+        this.currencies[city] = obj;
+        return obj;
     }
 
     getClosestPOS(geo) {
