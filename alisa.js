@@ -25,11 +25,12 @@ module.exports = async function(req,res) {
         }
     };
     alres.response = {text:replies.welcome(),end_session:false};
+    let responses = [];
     if(intquery!="") {
         try {
             responses = await client.detectIntent(dfreq);
         } catch(err) {
-            console.log(err);
+            console.log(err);            
         }
         let resp = responses[0]
         let respjson = structjson.structProtoToJson(resp.queryResult.webhookPayload)
