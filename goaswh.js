@@ -113,6 +113,7 @@ class GoasWebhook {
             return this.askForLocationPermissions(conv)
         }
         let params = conv.parameters;
+        if(params.currency=='') return conv.ask()
         if(params.cashmark=='') params.cashmark=ents.cashmark.cash;
         let currencies = await this.ds.loadCurrencies(conv.user.storage.location.city);
         let curcode = Number(curcodes[params.currency]);
@@ -124,7 +125,7 @@ class GoasWebhook {
             conv.ask('Курс продажи - '+courseSell)
             return;
         }
-        conv.ask(replies.currate_banner(params.cashmark))
+        conv.ask(replies.currate_banner(params.cashmark==ents.cashmark.cash))
         conv.ask(new Table({
             title: params.currency,
             subtitle: params.cashmark == ents.cashmark.cash ? 'Наличными' : 'Безналично',
