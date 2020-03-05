@@ -46,6 +46,7 @@ class GoasWebhook {
 
     welcome(conv) {
         console.log('welcome')
+        this.prepareLocation(conv)
         conv.user.storage.return='';
         if(conv.device.location) conv.user.storage.location = conv.device.location;
         if(!conv.user.storage.location) 
@@ -84,6 +85,7 @@ class GoasWebhook {
 
     async currencyExchange(conv) {
         console.log("currencies")
+        this.prepareLocation(conv)
         if(!conv.user.storage.location) {            
             return this.askForLocationPermissions(conv)
         }
@@ -109,6 +111,7 @@ class GoasWebhook {
     async currencyRate(conv) {
         console.log("currencyRate")
         console.log(conv.parameters)
+        this.prepareLocation(conv)
         if(!conv.user.storage.location) {            
             return this.askForLocationPermissions(conv)
         }
@@ -154,6 +157,12 @@ class GoasWebhook {
         console.log(`${from} -> ${to}`)
         let pcourse = courses.filter( e => e[0]==from && e[1]==to);
         return pcourse[0][2];
+    }
+
+    prepareLocation(conv) {
+        if(conv.screen==false) {
+            conv.user.storage.location = {city:'Москва'};
+        }
     }
 
 }

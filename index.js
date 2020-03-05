@@ -6,6 +6,7 @@ const expressjwt = require('express-jwt')
 const basicauth = require('basic-auth')
 const ds = require('./datasets.js')
 const wh = require('./goaswh.js')(ds);
+const alisa = require('./alisa.js')
 
 
 const goasuser = {
@@ -19,7 +20,7 @@ app.use(bodyparser.json());
 app.use((req,res,next) => {
     auth = basicauth(req);
     req.auth=auth;
-    if(req.method == 'POST') {
+    if(req.method == 'POST' && req.path!='/alisa') {
         if(!req.auth) 
             return res.status(401).send("Unauthorized-1");
         if(req.auth.name != goasuser.user || req.auth.pass != goasuser.pass) 
@@ -27,9 +28,12 @@ app.use((req,res,next) => {
     } 
     next();
 })
+
 app.listen(8080,() => console.log('Listening on 8080'));
 
 app.post('/goas',wh.app);
+
+app.post('/alisa',alisa)
 
 
 app.get('/goas/currencies',(req,res) => {
