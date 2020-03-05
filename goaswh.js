@@ -102,7 +102,7 @@ class GoasWebhook {
         let amount = course * params.amount;
         console.log(amount)
         let msg_gen = params.operation == ents.ops.sell ? replies.currency_sell : replies.currency_buy;
-        conv.ask(msg_gen(params.amount,amount,params.currency,params.cashmark == ents.cashmark.cash))
+        conv.ask(msg_gen(params.amount,amount.toFixed(2),params.currency,params.cashmark == ents.cashmark.cash))
         return conv;
     }
 
