@@ -21,12 +21,12 @@ module.exports = async function(req,res) {
           },
         },
         queryParams : {
-            payload : structjson.jsonToStructProto({'alisa': 'true'}),
+            payload : structjson.jsonToStructProto({alisa: true}),
         }
     };
     alres.response = {text:replies.welcome(),end_session:false};
-    let responses = [];
     if(intquery!="") {
+        let responses = [{}];
         try {
             responses = await client.detectIntent(dfreq);
         } catch(err) {
@@ -34,8 +34,8 @@ module.exports = async function(req,res) {
         }
         let resp = responses[0]
         let respjson = structjson.structProtoToJson(resp.queryResult.webhookPayload)
-        let intent_response='Что?'
-        if(respjson.google.richResponse===undefined)
+        let intent_response=''
+        if(respjson.google === undefined || respjson.google.richResponse===undefined)
             intent_response=resp.queryResult.fulfillmentText;
         else intent_response = respjson.google.richResponse.items.map(e => e.simpleResponse.textToSpeech).join("\n")
         alres.response = {text:intent_response,end_session:false};

@@ -160,7 +160,7 @@ class GoasWebhook {
     }
 
     prepareLocation(conv) {
-        if(conv.screen==false) {
+        if(conv.request.alisa) { //called from Yandex.alisa
             conv.user.storage.location = {city:'Москва'};
         }
     }
