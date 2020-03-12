@@ -24,7 +24,8 @@ const urlBranches = "https://www.open.ru/storage/mobile/offices_atms.json";
     }
 
     loadCurrencies(city) {
-        if(this.currencies[city]===undefined) 
+        let treshold = (Date.now()/1000).toFixed(0)-3600; //a hour ago
+        if(this.currencies[city]===undefined || this.currencies[city].Timestamp<treshold) 
             return new Promise((resolve,error) => {
                 https.get(urlCurrencies+"?city="+city, (res) => {
                     this.processJSON(res,(obj) => resolve(this.processCurrencies(city,obj)),error);
@@ -82,7 +83,9 @@ const urlBranches = "https://www.open.ru/storage/mobile/offices_atms.json";
     }
 
     processCurrencies(city,obj) {
+        let curdate = (Date.now()/1000).toFixed(0);
         this.currencies[city] = obj;
+        this.currencies[city].Timestamp = curdate;
         return obj;
     }
 
