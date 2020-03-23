@@ -27,7 +27,7 @@ const urlBranches = "https://www.open.ru/storage/mobile/offices_atms.json";
         let treshold = (Date.now()/1000).toFixed(0)-3600; //a hour ago
         if(this.currencies[city]===undefined || this.currencies[city].Timestamp<treshold) 
             return new Promise((resolve,error) => {
-                https.get(urlCurrencies+"?city="+city, (res) => {
+                https.get(urlCurrencies+"?city="+city, (res,err) => {
                     this.processJSON(res,(obj) => resolve(this.processCurrencies(city,obj)),error);
             })})
         else return new Promise((resolve,reject)=>{resolve(this.currencies[city])});

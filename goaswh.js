@@ -9,7 +9,7 @@ module.exports = function(dataset) {
 
 let ents = {
     ops : {
-        buy : 'buy',
+        buy : 'buy', //client sels when bank buys
         sell : 'sell'
     }, 
     cashmark : {
@@ -59,6 +59,7 @@ class GoasWebhook {
 
     askForLocationPermissions(conv) {        
         console.log("permission");
+        console.log(conv.user.storage);
         conv.user.storage.return = conv.intent;
         conv.user.storage.returnparams = conv.parameters;
         conv.ask(
@@ -76,6 +77,7 @@ class GoasWebhook {
         }
         conv.user.storage.location = conv.device.location;
         console.log(conv.user.storage);
+        console.log("Return:"+ents.evts[conv.user.storage.return])
         if(ents.evts.hasOwnProperty(conv.user.storage.return)) {
             conv.followup(ents.evts[conv.user.storage.return],conv.user.storage.returnparams)
             conv.user.storage.return=null;
@@ -85,6 +87,7 @@ class GoasWebhook {
 
     async currencyExchange(conv) {
         console.log("currencies")
+        console.log(conv.user.storage)
         this.prepareLocation(conv)
         if(!conv.user.storage.location) {            
             return this.askForLocationPermissions(conv)
@@ -99,7 +102,8 @@ class GoasWebhook {
         let currencies = await this.ds.loadCurrencies(conv.user.storage.location.city);
         let curcode = Number(curcodes[params.currency]);
         let opercourse = params.cashmark == ents.cashmark.cash ? currencies.Currencies.Cash : currencies.Currencies.Online;
-        let course = this.findCourse(opercourse,params.operation,curcode);
+        let clientOperation = params.operation == ents.ops.sell ? ents.ops.buy : ents.ops.sell; //client sells when bank buys
+        let course = this.findCourse(opercourse,clientOperation,curcode);
         console.log(course);
         let amount = course * params.amount;
         console.log(amount)
@@ -160,6 +164,7 @@ class GoasWebhook {
     }
 
     prepareLocation(conv) {
+        if(conv.device.location) conv.user.storage.location = conv.device.location;
         if(conv.request.alisa) { //called from Yandex.alisa
             conv.user.storage.location = {city:'Москва'};
         }
