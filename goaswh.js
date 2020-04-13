@@ -95,19 +95,22 @@ class GoasWebhook {
         var allparams = true;
         for (const param in conv.parameters) {
             const element = conv.parameters[param];
-            if(element=='') {allparams=false;break;}
+            if(element=='' && param!='rur') {allparams=false;break;}
         }
         if(!allparams) return conv.ask();
         let params  = conv.parameters;
         let currencies = await this.ds.loadCurrencies(conv.user.storage.location.city);
         let curcode = Number(curcodes[params.currency]);
-        let opercourse = params.cashmark == ents.cashmark.cash ? currencies.Currencies.Cash : currencies.Currencies.Online;
-        let clientOperation = params.operation == ents.ops.sell ? ents.ops.buy : ents.ops.sell; //client sells when bank buys
+        let opercourse = params.cashmark == ents.cashmark.cash ? currencies.Currencies.Cash : currencies.Currencies.Online;        
+        var clientOperation = params.operation == ents.ops.sell ? ents.ops.buy : ents.ops.sell; //client sells when bank buys
+        if(params.rur!='') clientOperation = ents.ops.buy; //we buy currency for roubles            
         let course = this.findCourse(opercourse,clientOperation,curcode);
         console.log(course);
-        let amount = course * params.amount;
-        console.log(amount)
-        let msg_gen = params.operation == ents.ops.sell ? replies.currency_sell : replies.currency_buy;
+        var amount = course * params.amount;
+        if(params.rur!='') amount = 0 + params.amount / course;
+        console.log(amount)       
+        var msg_gen = params.operation == ents.ops.sell ? replies.currency_sell : replies.currency_buy;
+        if(params.rur!='') msg_gen=replies.roubles_sell; 
         conv.ask(msg_gen(params.amount,amount.toFixed(2),params.currency,params.cashmark == ents.cashmark.cash))
         return conv;
     }
