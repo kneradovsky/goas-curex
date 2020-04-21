@@ -112,6 +112,9 @@ class GoasWebhook {
         var msg_gen = params.operation == ents.ops.sell ? replies.currency_sell : replies.currency_buy;
         if(params.rur!='') msg_gen=replies.roubles_sell; 
         conv.ask(msg_gen(params.amount,amount.toFixed(2),params.currency,params.cashmark == ents.cashmark.cash))
+        conv.ask(replies.what_else())
+        if(conv.screen)
+            conv.ask(new Suggestions(replies.suggestions()));
         return conv;
     }
 
@@ -133,6 +136,7 @@ class GoasWebhook {
         if(!conv.screen) {
             conv.ask('Курс покупки - '+courseBuy)
             conv.ask('Курс продажи - '+courseSell)
+            conv.ask(replies.what_else())
             return;
         }
         conv.ask(replies.currate_banner(params.cashmark==ents.cashmark.cash))
@@ -156,6 +160,7 @@ class GoasWebhook {
                 }
             ]
         }));
+        conv.ask(new Suggestions(replies.suggestions()));
     }
 
     findCourse(courses,oper,c1,c2=810) {

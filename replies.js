@@ -4,7 +4,9 @@ module.exports = function() {
         "currency_sell": (amount1,amount2,currency,cash=true) => `При продаже ${amount1} ${curname(currency,amount1)} Вы получите ${amount2} ${curname('RUR',amount2)} ${cash ? 'наличными' : 'онлайн'}`,
         "currency_buy" : (amount1,amount2,currency,cash=true) => `${amount1} ${curname(currency,amount1)} можно купить за ${amount2} ${curname('RUR',amount2)} ${cash ? 'наличными' : 'онлайн'}`,
         'currate_banner': (cash=true) => cash ? "Наличный курс обмена" : "Безналичный курс обмена",
-        "roubles_sell" : (amountrur,amountcur,currency,cash=true) => `При обмене ${amountrur} ${curname('RUR',amountrur)} на ${curname(currency,1)} Вы получите ${amountcur} ${curname(currency,amountcur)} ${cash ? 'наличными' : 'онлайн'}`
+        "roubles_sell" : (amountrur,amountcur,currency,cash=true) => `При обмене ${amountrur} ${curname('RUR',amountrur)} на ${curname(currency,1)} Вы получите ${amountcur} ${curname(currency,amountcur)} ${cash ? 'наличными' : 'онлайн'}`,
+        "what_else" : what_else,
+        "suggestions": suggestions
     }
 }
 
@@ -17,4 +19,23 @@ function curname(curcode,amnt) {
         case 'CHF' : return rem >= 5 || rem==0 ? "франков" : rem >= 2 ? "франка" : "франк";
         case 'RUR' : return rem >= 5 || rem==0 ? "рублей" : rem >= 2 ? "рубля" : "рубль";
     }
+}
+
+function what_else() {
+    let messages=[
+        'Что-нибудь еще?',
+        "Как я еще могу Вам помочь?",
+        "Какие еще валюты Вас интересуют?"
+    ];
+    let ind = Math.floor(Math.random() * Math.floor(messages.length));
+    return messages[ind];
+}
+
+function suggestions() {
+    return [
+        "Обменять 5000 рублей",
+        "Курс доллара онлайн",
+        "Курс евро наличными",
+        "Сколько стоит 124 доллара",
+    ];
 }
